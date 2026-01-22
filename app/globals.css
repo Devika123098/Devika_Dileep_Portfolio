@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+@theme {
+  --color-cream: #fffbf1;
+  --color-forest: #265f56;
+  --color-darkForest: #0f2926;
+  --color-pinkCard: #ffe5e3;
+  --color-blueCard: #e6f2ff;
+  --color-btnBlue: #6b9ebb;
+  --color-textMain: #1e1e1e;
+  --color-textGray: #4a4a4a;
+
+  --font-sans: var(--font-inter), sans-serif;
+  --font-display: var(--font-syne), sans-serif;
+
+  --shadow-hard: 4px 4px 0px 0px #265f56;
+  --shadow-hard-hover: 6px 6px 0px 0px #265f56;
+
+  --radius-card: 12px;
+}
+
+@layer utilities {
+  .bg-grid-pattern {
+    background-image:
+      linear-gradient(to right, rgba(38, 95, 86, 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(38, 95, 86, 0.06) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+}
+
+body {
+  background-color: var(--color-cream);
+  color: var(--color-textMain);
+}
+
+::selection {
+  background-color: var(--color-forest);
+  color: var(--color-cream);
+}
