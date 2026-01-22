@@ -50,7 +50,7 @@ export default function AboutSection() {
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[minmax(100px,auto)]">
         
-        <div className="about-card col-span-1 md:col-span-8 row-span-2 bg-[#fffbf1] border border-forest rounded-card p-8 md:p-12 shadow-hard relative overflow-hidden group">
+        <div className="about-card col-span-1 md:col-span-8 md:row-span-2 bg-[#fffbf1] border border-forest rounded-card p-8 md:p-12 shadow-hard relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-32 h-32 bg-forest/5 rounded-bl-full -mr-8 -mt-8 group-hover:scale-150 transition-transform duration-700"></div>
           
           <h3 className="font-display font-bold text-3xl text-forest mb-6">Hello! I'm {RESUME_DATA.personalInfo.name.split(' ')[0]} 🌸</h3>
@@ -66,7 +66,7 @@ export default function AboutSection() {
           </div>
         </div>
 
-        <div className="about-card col-span-1 md:col-span-4 row-span-2 bg-forest rounded-card shadow-hard relative overflow-hidden flex items-center justify-center p-6">
+        <div className="about-card col-span-1 md:col-span-4 md:row-span-2 bg-forest rounded-card shadow-hard relative overflow-hidden flex items-center justify-center p-6">
              <div className="w-48 h-48 bg-cream rounded-full flex items-center justify-center relative border-4 border-cream/20">
                 <svg width="100" height="100" viewBox="0 0 100 100" className="text-forest">
                     <circle cx="50" cy="50" r="30" fill="currentColor" opacity="0.2"/>

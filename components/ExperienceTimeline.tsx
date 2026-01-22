@@ -33,7 +33,7 @@ export default function ExperienceTimeline() {
       {RESUME_DATA.experience.map((exp, index) => (
         <div key={index} className="relative pl-10 md:pl-16 gsap-exp-item group">
           {/* Timeline Dot */}
-          <div className={`absolute -left-[9px] top-1.5 w-[20px] h-[20px] border-2 border-forest rounded-full transition-transform group-hover:scale-110 ${index === 0 ? 'bg-[#fffbf1]' : 'bg-forest'}`}></div>
+          <div className={`absolute -left-[11px] top-1.5 w-[20px] h-[20px] border-2 border-forest rounded-full transition-transform group-hover:scale-110 ${index === 0 ? 'bg-[#fffbf1]' : 'bg-forest'}`}></div>
           
           <h3 className="font-sans font-bold text-[22px] text-forest mb-1">
             {exp.company}

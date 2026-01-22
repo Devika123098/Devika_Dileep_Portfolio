@@ -37,7 +37,7 @@ export default function HeroIllustration() {
 
       <div className="relative w-full max-w-4xl h-full flex items-end justify-center mx-auto px-4 pb-[22px]">
         
-        <div className="gsap-plant absolute left-2 md:left-20 bottom-[22px] z-20 w-[80px] md:w-[100px]">
+        <div className="gsap-plant absolute left-2 md:left-20 bottom-[22px] z-20 w-[80px] md:w-[100px] hidden md:block">
           <svg viewBox="0 0 100 120" className="w-full h-auto drop-shadow-sm">
             <path d="M25 120 L20 90 L80 90 L75 120 Z" fill="#f0e6d2" stroke={colors.stroke} strokeWidth="2" strokeLinejoin="round"/>
             <path d="M15 90 L85 90" stroke={colors.stroke} strokeWidth="2" strokeLinecap="round"/>
@@ -84,7 +84,7 @@ export default function HeroIllustration() {
           </div>
         </div>
 
-        <div className="gsap-lamp absolute right-2 md:right-16 bottom-[22px] z-20 w-[70px] md:w-[90px]">
+        <div className="gsap-lamp absolute right-2 md:right-16 bottom-[22px] z-20 w-[70px] md:w-[90px] hidden md:block">
           <svg viewBox="0 0 100 150" className="w-full h-auto drop-shadow-sm">
             <path d="M20 150 L80 150 L75 140 L25 140 Z" fill="#f0e6d2" stroke={colors.stroke} strokeWidth="2" />
             <path d="M50 140 L30 80 L60 50" fill="none" stroke={colors.stroke} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
