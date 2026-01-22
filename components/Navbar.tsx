@@ -97,7 +97,7 @@ export default function Navbar() {
                 About Me
             </Link>
             <Link 
-                href="#" 
+                href="/resume.pdf" 
                 className="font-display font-bold text-4xl text-forest hover:text-btnBlue transition-colors"
                 onClick={toggleMobileMenu}
             >
