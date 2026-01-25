@@ -182,7 +182,7 @@ export default function About() {
                   </p>
                 </div>
 
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/40">
+                <div className="flex h-10 w-10 items-center shrink-0 justify-center rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/40">
                   <Icon icon="solar:code-circle-linear" width={20} />
                 </div>
               </div>
