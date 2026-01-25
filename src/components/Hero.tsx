@@ -15,7 +15,7 @@ const Hero: React.FC = () => {
   };
 
   return (
-    <header className="relative min-h-screen w-full flex flex-col items-center justify-start overflow-hidden bg-[#0a0a0a] pt-25">
+    <header className="relative min-h-screen w-full flex flex-col items-center justify-start overflow-hidden bg-[#0a0a0a] pt-32 md:pt-40 lg:pt-45">
       <div className="absolute inset-0 z-0">
         <div 
           className="absolute inset-0 opacity-[0.03] invert" 
