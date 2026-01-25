@@ -76,7 +76,6 @@ export default function Experience() {
       <div className="pointer-events-none absolute left-[-10%] top-[-20%] h-[420px] w-[420px] rounded-full bg-emerald-500/10 blur-[120px]" />
 
       <div className="relative mx-auto max-w-5xl px-6">
-        {/* Header */}
         <div className="mb-12 border-b border-neutral-900 pb-8">
           <div className="flex items-center gap-3 text-xs font-mono uppercase tracking-[0.25em] text-neutral-500">
             <span className="h-[1px] w-8 bg-emerald-500" />
@@ -124,8 +123,8 @@ export default function Experience() {
 
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div className="flex items-start gap-4">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-neutral-800 bg-neutral-950 text-white">
-                        <Icon icon={exp.icon} width={20} />
+                      <div className="flex h-11 w-11 shrink-0 aspect-square items-center justify-center rounded-xl border border-neutral-800 bg-neutral-950 text-white">
+                        <Icon icon={exp.icon} width={20} height={20} />
                       </div>
 
                       <div>
