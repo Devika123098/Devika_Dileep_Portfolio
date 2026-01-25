@@ -1,0 +1,193 @@
+"use client";
+
+import { Icon } from "@iconify/react";
+import { motion } from "framer-motion";
+
+const techCategories = {
+  languages: [
+    { name: "Python", logo: "/logos/python.svg" },
+    { name: "JavaScript", logo: "/logos/javascript.svg" },
+    { name: "HTML5", logo: "/logos/html5.svg" },
+    { name: "CSS3", logo: "/logos/css3.svg" },
+    { name: "C", logo: "/logos/c.svg" },
+    { name: "PHP", logo: "/logos/php.svg" },
+  ],
+  frameworks: [
+    { name: "React", logo: "/logos/react.svg" },
+    { name: "Next.js", logo: "/logos/nextjs.svg" },
+    { name: "Tailwind CSS", logo: "/logos/tailwindcss.svg" },
+  ],
+  tools: [
+    { name: "Figma", logo: "/logos/figma.svg" },
+    { name: "VS Code", logo: "/logos/vscode.svg" },
+    { name: "Git", logo: "/logos/git.svg" },
+    { name: "GitHub", logo: "/logos/github.svg" },
+    { name: "MySQL", logo: "/logos/mysql.svg" },
+  ],
+};
+
+const categoryMeta = [
+  { key: "languages", label: "Languages" },
+  { key: "frameworks", label: "Frameworks & Libraries" },
+  { key: "tools", label: "Tools & Platforms" },
+] as const;
+
+export default function About() {
+  return (
+    <section
+      id="about"
+      className="relative overflow-hidden border-t border-neutral-900 bg-[#050505] py-24 lg:py-32"
+    >
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.04]"
+        style={{
+          backgroundImage:
+            "linear-gradient(#262626 1px, transparent 1px), linear-gradient(90deg, #262626 1px, transparent 1px)",
+          backgroundSize: "40px 40px",
+        }}
+      />
+      <div className="pointer-events-none absolute inset-x-0 -top-40 h-80 bg-emerald-500/10 blur-[120px]" />
+
+      <div className="relative mx-auto flex max-w-6xl flex-col gap-16 px-6 lg:flex-row lg:gap-20">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="w-full lg:w-[45%] space-y-8"
+        >
+          <div className="flex items-center gap-3 text-xs font-mono uppercase tracking-[0.25em] text-neutral-500">
+            <span className="h-[1px] w-8 bg-emerald-500" />
+            <span>About</span>
+          </div>
+
+          <div className="space-y-4">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold text-white tracking-tight leading-tight">
+              Final‑year CS student crafting <span className="text-neutral-400">responsive</span>,
+              <br />
+              <span className="text-neutral-500">frontend architecture.</span>
+            </h2>
+            <p className="text-sm md:text-base text-neutral-400 leading-relaxed max-w-xl">
+              Experienced in converting Figma designs into high‑performance frontend solutions using
+              modern technologies. I focus on clean code, thoughtful motion, and{" "}
+              <span className="text-neutral-200">accessible, user‑first interfaces</span> that feel
+              as good as they look.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-4 pt-4 text-xs text-neutral-300">
+            <div className="rounded-lg border border-neutral-800 bg-neutral-900/40 px-4 py-3">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-500">
+                Focus
+              </p>
+              <p className="mt-1 font-medium text-neutral-100">
+                Frontend architecture & interaction design
+              </p>
+            </div>
+            <div className="rounded-lg border border-neutral-800 bg-neutral-900/40 px-4 py-3">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-500">
+                Currently
+              </p>
+              <p className="mt-1 font-medium text-neutral-100">
+                Final‑year CS · Building with Next.js & Tailwind
+              </p>
+            </div>
+          </div>
+          <div className="space-y-3 pt-4 text-sm text-neutral-300">
+            <div className="flex items-start gap-3">
+              <Icon
+                icon="solar:check-circle-linear"
+                className="mt-[2px] text-emerald-400"
+                width={18}
+              />
+              <p>Translate product ideas and Figma files into production‑ready UIs.</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <Icon
+                icon="solar:check-circle-linear"
+                className="mt-[2px] text-emerald-400"
+                width={18}
+              />
+              <p>Design component systems that scale across pages and features.</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <Icon
+                icon="solar:check-circle-linear"
+                className="mt-[2px] text-emerald-400"
+                width={18}
+              />
+              <p>Obsessed with micro‑interactions, performance, and accessibility.</p>
+            </div>
+          </div>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ delay: 0.1, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="w-full lg:w-[55%]"
+        >
+          <div className="rounded-2xl border border-neutral-800 bg-neutral-950/70 p-6 shadow-[0_0_80px_rgba(0,0,0,0.6)] backdrop-blur">
+            <div className="flex items-center justify-between gap-4 border-b border-neutral-800 pb-4">
+              <div className="space-y-1">
+                <p className="text-[11px] font-mono uppercase tracking-[0.25em] text-neutral-500">
+                  Tech Stack
+                </p>
+                <p className="text-xs text-neutral-400">
+                  Tools I use to design, build, and ship frontend experiences.
+                </p>
+              </div>
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/40">
+                <Icon icon="solar:code-circle-linear" width={20} />
+              </div>
+            </div>
+
+            <div className="mt-6 grid gap-5 md:grid-cols-2">
+              {categoryMeta.map((category) => (
+                <div
+                  key={category.key}
+                  className="group rounded-xl border border-neutral-800 bg-neutral-900/40 p-4 transition-colors hover:border-emerald-500/50"
+                >
+                  <div className="mb-3 flex items-center justify-between gap-2">
+                    <p className="text-[11px] font-mono uppercase tracking-[0.2em] text-neutral-500">
+                      {category.label}
+                    </p>
+                    <Icon
+                      icon="solar:arrow-right-up-linear"
+                      className="text-neutral-600 group-hover:text-emerald-400 transition-colors"
+                      width={16}
+                    />
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    {techCategories[category.key].map((tech) => (
+                      <div
+                        key={tech.name}
+                        className="inline-flex items-center gap-2 rounded-full border border-neutral-800 bg-neutral-950/60 px-3 py-1 text-[11px] font-medium text-neutral-200 shadow-sm transition-transform duration-200 group-hover:translate-y-[-1px]"
+                      >
+                        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-neutral-900">
+                          <img
+                            src={tech.logo}
+                            alt={tech.name}
+                            className="h-3.5 w-3.5 object-contain"
+                          />
+                        </span>
+                        <span>{tech.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-6 flex items-center justify-between text-[11px] text-neutral-500">
+              <span>Always learning · Currently exploring animation & 3D UI.</span>
+              <span className="hidden sm:inline text-emerald-400/80">
+                Prefer clean, composable React over one‑off hacks.
+              </span>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
