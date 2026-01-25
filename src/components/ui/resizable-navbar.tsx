@@ -7,7 +7,8 @@ import {
   useScroll,
   useMotionValueEvent,
 } from "motion/react";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 interface NavbarProps {
   children: React.ReactNode;
@@ -56,11 +57,7 @@ export const Navbar = ({ children, className }: NavbarProps) => {
   const [visible, setVisible] = useState<boolean>(false);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
-    if (latest > 100) {
-      setVisible(true);
-    } else {
-      setVisible(false);
-    }
+    setVisible(latest > 100);
   });
 
   return (
@@ -149,7 +146,7 @@ export const MobileNav = ({ children, className, visible }: MobileNavProps) => {
         boxShadow: visible
           ? "0 0 24px rgba(0, 0, 0, 0.2), 0 1px 1px rgba(0, 0, 0, 0.1)"
           : "none",
-        width: visible ? "90%" : "100%",
+        width: "100%",
         y: visible ? 10 : 0,
       }}
       transition={{
@@ -158,9 +155,9 @@ export const MobileNav = ({ children, className, visible }: MobileNavProps) => {
         damping: 50,
       }}
       className={cn(
-        "relative z-50 mx-auto flex w-full flex-col items-center justify-between px-4 py-4 lg:hidden",
+        "relative z-50 flex w-full flex-col items-center justify-between px-4 py-4 lg:hidden",
         visible
-          ? "bg-neutral-950/80 rounded-full border border-neutral-800"
+          ? "bg-neutral-950/80 border-b border-neutral-800"
           : "bg-gradient-to-b from-neutral-950/90 to-transparent",
         className
       )}
@@ -176,10 +173,7 @@ export const MobileNavHeader = ({
 }: MobileNavHeaderProps) => {
   return (
     <div
-      className={cn(
-        "flex w-full flex-row items-center justify-between",
-        className
-      )}
+      className={cn("flex w-full flex-row items-center justify-between", className)}
     >
       {children}
     </div>
@@ -192,7 +186,13 @@ export const MobileNavMenu = ({
   isOpen,
   onClose,
 }: MobileNavMenuProps) => {
-  return (
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
+
+  if (!mounted) return null;
+
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
         <motion.div
@@ -200,14 +200,21 @@ export const MobileNavMenu = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className={cn(
-            "fixed inset-0 z-[60] flex h-screen w-full flex-col items-center justify-center gap-8 bg-neutral-950/95 backdrop-blur-xl",
+            "fixed inset-0 z-[9999] h-dvh w-screen bg-neutral-950/95 backdrop-blur-xl",
             className
           )}
+          onClick={onClose}
         >
-          {children}
+          <div
+            className="relative h-dvh w-screen flex flex-col items-center justify-center gap-8 px-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {children}
+          </div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 };
 
@@ -219,9 +226,9 @@ export const MobileNavToggle = ({
   onClick: () => void;
 }) => {
   return isOpen ? (
-    <IconX className="text-white" onClick={onClick} />
+    <IconX className="text-white cursor-pointer" onClick={onClick} />
   ) : (
-    <IconMenu2 className="text-white" onClick={onClick} />
+    <IconMenu2 className="text-white cursor-pointer" onClick={onClick} />
   );
 };
 
