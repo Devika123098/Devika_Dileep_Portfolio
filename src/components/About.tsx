@@ -40,14 +40,16 @@ const categoryMeta = [
   { key: "frameworks", label: "Frameworks & Libraries" },
   { key: "tools", label: "Tools & Platforms" },
 ] as const;
-
 function useIsMobile(breakpointPx = 768) {
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia(`(max-width: ${breakpointPx}px)`).matches;
+  });
 
   useEffect(() => {
     const mq = window.matchMedia(`(max-width: ${breakpointPx}px)`);
     const update = () => setIsMobile(mq.matches);
-    update();
+
     if (mq.addEventListener) mq.addEventListener("change", update);
     else mq.addListener(update);
 
@@ -63,6 +65,7 @@ function useIsMobile(breakpointPx = 768) {
 export default function About() {
   const reduced = useReducedMotion();
   const isMobile = useIsMobile(768);
+
   const motionEnabled = useMemo(() => !(reduced || isMobile), [reduced, isMobile]);
 
   const fadeUp: Variants = {
@@ -73,6 +76,8 @@ export default function About() {
       transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] },
     },
   };
+
+  const initialState = motionEnabled ? "hidden" : "show";
 
   return (
     <LazyMotion features={domAnimation}>
@@ -92,10 +97,11 @@ export default function About() {
 
         <div className="relative mx-auto flex max-w-6xl flex-col gap-16 px-6 lg:flex-row lg:gap-20">
           <m.div
-            initial={motionEnabled ? "hidden" : false}
+            variants={fadeUp}
+            initial={initialState}
             whileInView={motionEnabled ? "show" : undefined}
+            animate={!motionEnabled ? "show" : undefined}
             viewport={motionEnabled ? { once: true, amount: 0.35 } : undefined}
-            variants={motionEnabled ? fadeUp : undefined}
             className="w-full lg:w-[45%] space-y-8"
           >
             <div className="flex items-center gap-3 text-xs font-mono uppercase tracking-[0.25em] text-neutral-500">
@@ -151,10 +157,11 @@ export default function About() {
             </div>
           </m.div>
           <m.div
-            initial={motionEnabled ? "hidden" : false}
+            variants={fadeUp}
+            initial={initialState}
             whileInView={motionEnabled ? "show" : undefined}
+            animate={!motionEnabled ? "show" : undefined}
             viewport={motionEnabled ? { once: true, amount: 0.25 } : undefined}
-            variants={motionEnabled ? fadeUp : undefined}
             className="w-full lg:w-[55%]"
           >
             <div className="rounded-2xl border border-neutral-800 bg-neutral-950/70 p-6 shadow-[0_0_80px_rgba(0,0,0,0.6)] backdrop-blur">
