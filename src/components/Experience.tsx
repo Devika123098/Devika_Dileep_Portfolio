@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect, useMemo, useState } from "react";
 import { Icon } from "@iconify/react";
 import {
@@ -53,13 +54,16 @@ const experiences: ExperienceItem[] = [
     icon: "solar:code-circle-linear",
   },
 ];
+
 function useIsMobile(breakpointPx = 768) {
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia(`(max-width: ${breakpointPx}px)`).matches;
+  });
 
   useEffect(() => {
     const mq = window.matchMedia(`(max-width: ${breakpointPx}px)`);
     const update = () => setIsMobile(mq.matches);
-    update();
 
     if (mq.addEventListener) mq.addEventListener("change", update);
     else mq.addListener(update);
@@ -74,23 +78,33 @@ function useIsMobile(breakpointPx = 768) {
 }
 
 export default function Experience() {
-  const reduced = useReducedMotion();
+  const reducedMotion = useReducedMotion();
   const isMobile = useIsMobile(768);
-  const motionEnabled = useMemo(() => !(reduced || isMobile), [reduced, isMobile]);
 
-  const container: Variants = {
-    hidden: {},
-    show: { transition: { staggerChildren: 0.08 } },
-  };
+  const motionEnabled = !reducedMotion;
 
-  const item: Variants = {
-    hidden: { opacity: 0, y: 16 },
-    show: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] },
-    },
-  };
+  const { container, item, viewportAmount } = useMemo(() => {
+    const y = isMobile ? 10 : 16;
+    const duration = isMobile ? 0.35 : 0.55;
+    const stagger = isMobile ? 0.05 : 0.08;
+    const viewportAmount = isMobile ? 0.12 : 0.25;
+
+    const container: Variants = {
+      hidden: {},
+      show: { transition: { staggerChildren: stagger } },
+    };
+
+    const item: Variants = {
+      hidden: { opacity: 0, y },
+      show: {
+        opacity: 1,
+        y: 0,
+        transition: { duration, ease: [0.16, 1, 0.3, 1] },
+      },
+    };
+
+    return { container, item, viewportAmount };
+  }, [isMobile]);
 
   return (
     <LazyMotion features={domAnimation}>
@@ -122,11 +136,12 @@ export default function Experience() {
               clean systems.
             </p>
           </div>
+
           <m.ol
             variants={motionEnabled ? container : undefined}
             initial={motionEnabled ? "hidden" : false}
             whileInView={motionEnabled ? "show" : undefined}
-            viewport={motionEnabled ? { once: true, amount: 0.25 } : undefined}
+            viewport={motionEnabled ? { once: true, amount: viewportAmount } : undefined}
             className="relative space-y-6"
           >
             <div className="pointer-events-none absolute left-[18px] top-2 bottom-2 w-px bg-gradient-to-b from-neutral-800 via-neutral-800/60 to-transparent" />
@@ -151,6 +166,7 @@ export default function Experience() {
                     }}
                   />
                 </div>
+
                 <div className="rounded-2xl p-[1px] bg-gradient-to-b from-neutral-800/80 to-neutral-900/30">
                   <div className="relative overflow-hidden rounded-2xl border border-neutral-900 bg-neutral-950/55 p-6 backdrop-blur transition-colors duration-300 group-hover:border-[color:var(--accent)]/45">
                     <div
