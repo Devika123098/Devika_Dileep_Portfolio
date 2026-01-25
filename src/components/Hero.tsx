@@ -15,7 +15,7 @@ const Hero: React.FC = () => {
   };
 
   return (
-    <header className="relative min-h-screen w-full flex flex-col items-center justify-start overflow-hidden bg-[#0a0a0a] pt-32 md:pt-40 lg:pt-48">
+    <header className="relative min-h-screen w-full flex flex-col items-center justify-start overflow-hidden bg-[#0a0a0a] pt-10">
       <div className="absolute inset-0 z-0">
         <div 
           className="absolute inset-0 opacity-[0.03] invert" 
@@ -106,15 +106,6 @@ const Hero: React.FC = () => {
           </div>
         </motion.div>
       </div>
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-3"
-      >
-        <span className="text-[9px] uppercase tracking-[0.4em] text-neutral-600 font-bold">Discover</span>
-        <div className="w-[1px] h-16 bg-gradient-to-b from-emerald-500/50 via-emerald-500/20 to-transparent" />
-      </motion.div>
     </header>
   );
 };
