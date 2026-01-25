@@ -83,12 +83,14 @@ const projects: Project[] = [
 ];
 
 function useIsMobile(breakpointPx = 768) {
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia(`(max-width: ${breakpointPx}px)`).matches;
+  });
 
   useEffect(() => {
     const mq = window.matchMedia(`(max-width: ${breakpointPx}px)`);
     const update = () => setIsMobile(mq.matches);
-    update();
 
     if (mq.addEventListener) mq.addEventListener("change", update);
     else mq.addListener(update);
@@ -114,17 +116,21 @@ function ProjectCard({
   p,
   motionEnabled,
   item,
+  enableHover,
 }: {
   p: Project;
   motionEnabled: boolean;
   item: Variants;
+  enableHover: boolean;
 }) {
   return (
     <m.article
       variants={motionEnabled ? item : undefined}
-      whileHover={motionEnabled ? { y: -6 } : undefined}
+      whileHover={motionEnabled && enableHover ? { y: -6 } : undefined}
       transition={
-        motionEnabled ? { type: "spring", stiffness: 260, damping: 22 } : undefined
+        motionEnabled && enableHover
+          ? { type: "spring", stiffness: 260, damping: 22 }
+          : undefined
       }
       style={{ ["--accent" as any]: p.accent }}
       className="group relative"
@@ -171,15 +177,24 @@ function ProjectCard({
                   className="inline-flex items-center gap-2 rounded-full border border-neutral-800 bg-neutral-950/40 px-3 py-2 text-xs text-neutral-200 hover:border-neutral-600 transition-colors"
                 >
                   Live
-                  <Icon icon="solar:link-minimalistic-2-linear" width={14} height={14} />
+                  <Icon
+                    icon="solar:link-minimalistic-2-linear"
+                    width={14}
+                    height={14}
+                  />
                 </a>
               )}
             </div>
           </div>
 
           <div className="mt-5 space-y-3">
-            <h4 className="text-xl font-semibold tracking-tight text-white">{p.title}</h4>
-            <p className="text-sm leading-relaxed text-neutral-400">{p.description}</p>
+            <h4 className="text-xl font-semibold tracking-tight text-white">
+              {p.title}
+            </h4>
+
+            <p className="text-sm leading-relaxed text-neutral-400">
+              {p.description}
+            </p>
 
             <div className="flex flex-wrap gap-2 pt-2">
               {p.tech.map((t) => (
@@ -201,23 +216,32 @@ function ProjectCard({
 }
 
 export default function Projects() {
-  const reduced = useReducedMotion();
+  const reducedMotion = useReducedMotion();
   const isMobile = useIsMobile(768);
-  const motionEnabled = useMemo(() => !(reduced || isMobile), [reduced, isMobile]);
+  const motionEnabled = !reducedMotion;
+  const { container, item } = useMemo(() => {
+    const y = isMobile ? 8 : 14;
+    const duration = isMobile ? 0.35 : 0.55;
+    const stagger = isMobile ? 0.03 : 0.06;
 
-  const container: Variants = {
-    hidden: {},
-    show: { transition: { staggerChildren: 0.06 } },
-  };
+    const container: Variants = {
+      hidden: {},
+      show: { transition: { staggerChildren: stagger } },
+    };
 
-  const item: Variants = {
-    hidden: { opacity: 0, y: 14 },
-    show: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] },
-    },
-  };
+    const item: Variants = {
+      hidden: { opacity: 0, y },
+      show: {
+        opacity: 1,
+        y: 0,
+        transition: { duration, ease: [0.16, 1, 0.3, 1] },
+      },
+    };
+
+    return { container, item };
+  }, [isMobile]);
+
+  const enableHover = !isMobile; 
 
   const featured = projects.find((p) => p.featured);
   const rest = projects.filter((p) => !p.featured);
@@ -260,20 +284,37 @@ export default function Projects() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-neutral-400 hover:text-white transition-colors"
             >
-              View GitHub <Icon icon="solar:arrow-right-up-linear" width={14} height={14} />
+              View GitHub{" "}
+              <Icon icon="solar:arrow-right-up-linear" width={14} height={14} />
             </a>
           </div>
 
           <div className="mt-10 space-y-6">
             {featured && (
-              <ProjectCard p={featured} motionEnabled={motionEnabled} item={item} />
+              <m.div
+                variants={item}
+                initial={motionEnabled ? "hidden" : false}
+                whileInView={motionEnabled ? "show" : undefined}
+                viewport={
+                  motionEnabled ? { once: true, amount: isMobile ? 0.15 : 0.2 } : undefined
+                }
+              >
+                <ProjectCard
+                  p={featured}
+                  motionEnabled={motionEnabled}
+                  item={item}
+                  enableHover={enableHover}
+                />
+              </m.div>
             )}
 
             <m.div
               variants={motionEnabled ? container : undefined}
               initial={motionEnabled ? "hidden" : false}
               whileInView={motionEnabled ? "show" : undefined}
-              viewport={motionEnabled ? { once: true, amount: 0.18 } : undefined}
+              viewport={
+                motionEnabled ? { once: true, amount: isMobile ? 0.12 : 0.18 } : undefined
+              }
               className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
             >
               {rest.map((p) => (
@@ -282,6 +323,7 @@ export default function Projects() {
                   p={p}
                   motionEnabled={motionEnabled}
                   item={item}
+                  enableHover={enableHover}
                 />
               ))}
             </m.div>
