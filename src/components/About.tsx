@@ -40,15 +40,14 @@ const categoryMeta = [
   { key: "frameworks", label: "Frameworks & Libraries" },
   { key: "tools", label: "Tools & Platforms" },
 ] as const;
+
 function useIsMobile(breakpointPx = 768) {
-  const [isMobile, setIsMobile] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    return window.matchMedia(`(max-width: ${breakpointPx}px)`).matches;
-  });
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const mq = window.matchMedia(`(max-width: ${breakpointPx}px)`);
     const update = () => setIsMobile(mq.matches);
+    update();
 
     if (mq.addEventListener) mq.addEventListener("change", update);
     else mq.addListener(update);
@@ -63,21 +62,23 @@ function useIsMobile(breakpointPx = 768) {
 }
 
 export default function About() {
-  const reduced = useReducedMotion();
+  const reducedMotion = useReducedMotion();
   const isMobile = useIsMobile(768);
+  const motionEnabled = !reducedMotion;
 
-  const motionEnabled = useMemo(() => !(reduced || isMobile), [reduced, isMobile]);
+  const fadeUp: Variants = useMemo(() => {
+    const y = isMobile ? 8 : 14;
+    const duration = isMobile ? 0.35 : 0.55;
 
-  const fadeUp: Variants = {
-    hidden: { opacity: 0, y: 14 },
-    show: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] },
-    },
-  };
-
-  const initialState = motionEnabled ? "hidden" : "show";
+    return {
+      hidden: { opacity: 0, y },
+      show: {
+        opacity: 1,
+        y: 0,
+        transition: { duration, ease: [0.16, 1, 0.3, 1] },
+      },
+    };
+  }, [isMobile]);
 
   return (
     <LazyMotion features={domAnimation}>
@@ -97,11 +98,12 @@ export default function About() {
 
         <div className="relative mx-auto flex max-w-6xl flex-col gap-16 px-6 lg:flex-row lg:gap-20">
           <m.div
-            variants={fadeUp}
-            initial={initialState}
+            variants={motionEnabled ? fadeUp : undefined}
+            initial={motionEnabled ? "hidden" : false}
             whileInView={motionEnabled ? "show" : undefined}
-            animate={!motionEnabled ? "show" : undefined}
-            viewport={motionEnabled ? { once: true, amount: 0.35 } : undefined}
+            viewport={
+              motionEnabled ? { once: true, amount: isMobile ? 0.2 : 0.35 } : undefined
+            }
             className="w-full lg:w-[45%] space-y-8"
           >
             <div className="flex items-center gap-3 text-xs font-mono uppercase tracking-[0.25em] text-neutral-500">
@@ -117,8 +119,8 @@ export default function About() {
               </h2>
 
               <p className="text-sm md:text-base text-neutral-400 leading-relaxed max-w-xl">
-                Experienced in converting Figma designs into high‑performance frontend solutions using
-                modern technologies. I focus on clean code, thoughtful motion, and{" "}
+                Experienced in converting Figma designs into high‑performance frontend solutions
+                using modern technologies. I focus on clean code, thoughtful motion, and{" "}
                 <span className="text-neutral-200">accessible, user‑first interfaces</span> that feel
                 as good as they look.
               </p>
@@ -126,13 +128,17 @@ export default function About() {
 
             <div className="grid grid-cols-2 gap-4 pt-4 text-xs text-neutral-300">
               <div className="rounded-lg border border-neutral-800 bg-neutral-900/40 px-4 py-3">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-500">Focus</p>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-500">
+                  Focus
+                </p>
                 <p className="mt-1 font-medium text-neutral-100">
                   Frontend architecture & interaction design
                 </p>
               </div>
               <div className="rounded-lg border border-neutral-800 bg-neutral-900/40 px-4 py-3">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-500">Currently</p>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-500">
+                  Currently
+                </p>
                 <p className="mt-1 font-medium text-neutral-100">
                   Final‑year CS · Building with Next.js & Tailwind
                 </p>
@@ -157,11 +163,12 @@ export default function About() {
             </div>
           </m.div>
           <m.div
-            variants={fadeUp}
-            initial={initialState}
+            variants={motionEnabled ? fadeUp : undefined}
+            initial={motionEnabled ? "hidden" : false}
             whileInView={motionEnabled ? "show" : undefined}
-            animate={!motionEnabled ? "show" : undefined}
-            viewport={motionEnabled ? { once: true, amount: 0.25 } : undefined}
+            viewport={
+              motionEnabled ? { once: true, amount: isMobile ? 0.2 : 0.25 } : undefined
+            }
             className="w-full lg:w-[55%]"
           >
             <div className="rounded-2xl border border-neutral-800 bg-neutral-950/70 p-6 shadow-[0_0_80px_rgba(0,0,0,0.6)] backdrop-blur">
