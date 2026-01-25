@@ -1,8 +1,14 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Icon } from "@iconify/react";
-import { motion, Variants } from "framer-motion";
+import {
+  LazyMotion,
+  domAnimation,
+  m,
+  useReducedMotion,
+  type Variants,
+} from "framer-motion";
 
 type Project = {
   id: number;
@@ -13,7 +19,7 @@ type Project = {
   tech: string[];
   repo: string;
   live?: string;
-  accent: string; 
+  accent: string;
   featured?: boolean;
 };
 
@@ -76,19 +82,25 @@ const projects: Project[] = [
   },
 ];
 
-const container: Variants = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.06 } },
-};
+function useIsMobile(breakpointPx = 768) {
+  const [isMobile, setIsMobile] = useState(false);
 
-const item: Variants = {
-  hidden: { opacity: 0, y: 14 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
-  },
-};
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${breakpointPx}px)`);
+    const update = () => setIsMobile(mq.matches);
+    update();
+
+    if (mq.addEventListener) mq.addEventListener("change", update);
+    else mq.addListener(update);
+
+    return () => {
+      if (mq.removeEventListener) mq.removeEventListener("change", update);
+      else mq.removeListener(update);
+    };
+  }, [breakpointPx]);
+
+  return isMobile;
+}
 
 function TechChip({ label }: { label: string }) {
   return (
@@ -98,32 +110,39 @@ function TechChip({ label }: { label: string }) {
   );
 }
 
-function ProjectCard({ p }: { p: Project }) {
+function ProjectCard({
+  p,
+  motionEnabled,
+  item,
+}: {
+  p: Project;
+  motionEnabled: boolean;
+  item: Variants;
+}) {
   return (
-    <motion.article
-      variants={item}
-      whileHover={{ y: -6 }}
-      transition={{ type: "spring", stiffness: 260, damping: 22 }}
+    <m.article
+      variants={motionEnabled ? item : undefined}
+      whileHover={motionEnabled ? { y: -6 } : undefined}
+      transition={
+        motionEnabled ? { type: "spring", stiffness: 260, damping: 22 } : undefined
+      }
       style={{ ["--accent" as any]: p.accent }}
       className="group relative"
     >
       <div className="rounded-2xl p-[1px] bg-gradient-to-b from-neutral-800/80 to-neutral-900/30">
         <div className="relative overflow-hidden rounded-2xl border border-neutral-900 bg-neutral-950/50 p-6 backdrop-blur transition-colors duration-300 group-hover:border-[color:var(--accent)]/40">
-          <div className="pointer-events-none absolute -top-24 left-1/2 h-48 w-48 -translate-x-1/2 rounded-full blur-[60px] opacity-0 group-hover:opacity-25 transition-opacity"
-               style={{ background: "var(--accent)" }}
+          <div
+            className="pointer-events-none absolute -top-24 left-1/2 h-48 w-48 -translate-x-1/2 rounded-full blur-[60px] opacity-0 group-hover:opacity-25 transition-opacity"
+            style={{ background: "var(--accent)" }}
           />
 
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div
-                className="flex h-10 w-10 items-center justify-center rounded-xl border border-neutral-800 bg-neutral-950 text-white"
-              >
-                <Icon icon={p.icon} width={20} />
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-neutral-800 bg-neutral-950 text-white">
+                <Icon icon={p.icon} width={20} height={20} />
               </div>
 
-              <span
-                className="text-[10px] uppercase tracking-[0.25em] text-neutral-500"
-              >
+              <span className="text-[10px] uppercase tracking-[0.25em] text-neutral-500">
                 {p.badge}
               </span>
             </div>
@@ -139,9 +158,11 @@ function ProjectCard({ p }: { p: Project }) {
                 <Icon
                   icon="solar:arrow-right-up-linear"
                   width={14}
+                  height={14}
                   className="text-neutral-400 group-hover:text-[color:var(--accent)] transition-colors"
                 />
               </a>
+
               {p.live && (
                 <a
                   href={p.live}
@@ -150,25 +171,22 @@ function ProjectCard({ p }: { p: Project }) {
                   className="inline-flex items-center gap-2 rounded-full border border-neutral-800 bg-neutral-950/40 px-3 py-2 text-xs text-neutral-200 hover:border-neutral-600 transition-colors"
                 >
                   Live
-                  <Icon icon="solar:link-minimalistic-2-linear" width={14} />
+                  <Icon icon="solar:link-minimalistic-2-linear" width={14} height={14} />
                 </a>
               )}
             </div>
           </div>
 
           <div className="mt-5 space-y-3">
-            <h4 className="text-xl font-semibold tracking-tight text-white">
-              {p.title}
-            </h4>
-            <p className="text-sm leading-relaxed text-neutral-400">
-              {p.description}
-            </p>
+            <h4 className="text-xl font-semibold tracking-tight text-white">{p.title}</h4>
+            <p className="text-sm leading-relaxed text-neutral-400">{p.description}</p>
 
             <div className="flex flex-wrap gap-2 pt-2">
               {p.tech.map((t) => (
                 <TechChip key={t} label={t} />
               ))}
             </div>
+
             <div className="pt-3">
               <span className="inline-flex items-center gap-2 text-xs text-neutral-500">
                 Explore details
@@ -178,68 +196,98 @@ function ProjectCard({ p }: { p: Project }) {
           </div>
         </div>
       </div>
-    </motion.article>
+    </m.article>
   );
 }
 
 export default function Projects() {
+  const reduced = useReducedMotion();
+  const isMobile = useIsMobile(768);
+  const motionEnabled = useMemo(() => !(reduced || isMobile), [reduced, isMobile]);
+
+  const container: Variants = {
+    hidden: {},
+    show: { transition: { staggerChildren: 0.06 } },
+  };
+
+  const item: Variants = {
+    hidden: { opacity: 0, y: 14 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] },
+    },
+  };
+
   const featured = projects.find((p) => p.featured);
   const rest = projects.filter((p) => !p.featured);
 
   return (
-    <section id="projects" className="relative overflow-hidden bg-[#050505] py-24 lg:py-32 border-t border-neutral-900">
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.05]"
-        style={{
-          backgroundImage:
-            "linear-gradient(#262626 1px, transparent 1px), linear-gradient(90deg, #262626 1px, transparent 1px)",
-          backgroundSize: "44px 44px",
-        }}
-      />
-      <div className="pointer-events-none absolute right-[-10%] top-[-20%] h-[420px] w-[420px] rounded-full bg-emerald-500/10 blur-[120px]" />
-      <div className="pointer-events-none absolute left-[-10%] bottom-[-20%] h-[420px] w-[420px] rounded-full bg-blue-500/10 blur-[120px]" />
+    <LazyMotion features={domAnimation}>
+      <section
+        id="projects"
+        className="relative overflow-hidden bg-[#050505] py-24 lg:py-32 border-t border-neutral-900"
+      >
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.05]"
+          style={{
+            backgroundImage:
+              "linear-gradient(#262626 1px, transparent 1px), linear-gradient(90deg, #262626 1px, transparent 1px)",
+            backgroundSize: "44px 44px",
+          }}
+        />
+        <div className="pointer-events-none absolute right-[-10%] top-[-20%] h-[420px] w-[420px] rounded-full bg-emerald-500/10 blur-[120px]" />
+        <div className="pointer-events-none absolute left-[-10%] bottom-[-20%] h-[420px] w-[420px] rounded-full bg-blue-500/10 blur-[120px]" />
 
-      <div className="relative mx-auto max-w-6xl px-6">
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between border-b border-neutral-900 pb-8">
-          <div className="space-y-3">
-            <div className="flex items-center gap-3 text-xs font-mono uppercase tracking-[0.25em] text-neutral-500">
-              <span className="h-[1px] w-8 bg-emerald-500" />
-              <span>Selected Work</span>
+        <div className="relative mx-auto max-w-6xl px-6">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between border-b border-neutral-900 pb-8">
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 text-xs font-mono uppercase tracking-[0.25em] text-neutral-500">
+                <span className="h-[1px] w-8 bg-emerald-500" />
+                <span>Selected Work</span>
+              </div>
+              <h3 className="text-2xl md:text-3xl font-semibold text-white tracking-tight">
+                Projects that show how I build
+              </h3>
+              <p className="text-sm text-neutral-400 max-w-xl">
+                Freelance and academic work focused on performance, clean UI systems, and strong UX.
+              </p>
             </div>
-            <h3 className="text-2xl md:text-3xl font-semibold text-white tracking-tight">
-              Projects that show how I build
-            </h3>
-            <p className="text-sm text-neutral-400 max-w-xl">
-              Freelance and academic work focused on performance, clean UI systems, and strong UX.
-            </p>
+
+            <a
+              href="https://github.com/Devika123098"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-neutral-400 hover:text-white transition-colors"
+            >
+              View GitHub <Icon icon="solar:arrow-right-up-linear" width={14} height={14} />
+            </a>
           </div>
 
-          <a
-            href="https://github.com/Devika123098"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-neutral-400 hover:text-white transition-colors"
-          >
-            View GitHub <Icon icon="solar:arrow-right-up-linear" width={14} />
-          </a>
+          <div className="mt-10 space-y-6">
+            {featured && (
+              <ProjectCard p={featured} motionEnabled={motionEnabled} item={item} />
+            )}
+
+            <m.div
+              variants={motionEnabled ? container : undefined}
+              initial={motionEnabled ? "hidden" : false}
+              whileInView={motionEnabled ? "show" : undefined}
+              viewport={motionEnabled ? { once: true, amount: 0.18 } : undefined}
+              className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+            >
+              {rest.map((p) => (
+                <ProjectCard
+                  key={p.id}
+                  p={p}
+                  motionEnabled={motionEnabled}
+                  item={item}
+                />
+              ))}
+            </m.div>
+          </div>
         </div>
-
-        <div className="mt-10 space-y-6">
-  {featured && <ProjectCard p={featured} />}
-
-  <motion.div
-    variants={container}
-    initial="hidden"
-    whileInView="show"
-    viewport={{ once: true, amount: 0.2 }}
-    className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
-  >
-    {rest.map((p) => (
-      <ProjectCard key={p.id} p={p} />
-    ))}
-  </motion.div>
-</div>
-      </div>
-    </section>
+      </section>
+    </LazyMotion>
   );
 }
