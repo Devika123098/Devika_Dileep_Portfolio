@@ -1,28 +1,31 @@
 "use client";
 
+import React from "react";
 import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
 
-const techCategories = {
+type TechItem = { name: string; icon: string };
+
+const techCategories: Record<"languages" | "frameworks" | "tools", TechItem[]> = {
   languages: [
-    { name: "Python", logo: "/logos/python.svg" },
-    { name: "JavaScript", logo: "/logos/javascript.svg" },
-    { name: "HTML5", logo: "/logos/html5.svg" },
-    { name: "CSS3", logo: "/logos/css3.svg" },
-    { name: "C", logo: "/logos/c.svg" },
-    { name: "PHP", logo: "/logos/php.svg" },
+    { name: "Python", icon: "logos:python" },
+    { name: "JavaScript", icon: "logos:javascript" },
+    { name: "HTML5", icon: "logos:html-5" },
+    { name: "CSS3", icon: "logos:css-3" },
+    { name: "C", icon: "logos:c" },
+    { name: "PHP", icon: "logos:php" },
   ],
   frameworks: [
-    { name: "React", logo: "/logos/react.svg" },
-    { name: "Next.js", logo: "/logos/nextjs.svg" },
-    { name: "Tailwind CSS", logo: "/logos/tailwindcss.svg" },
+    { name: "React", icon: "logos:react" },
+    { name: "Next.js", icon: "logos:nextjs-icon" }, 
+    { name: "Tailwind CSS", icon: "logos:tailwindcss-icon" },
   ],
   tools: [
-    { name: "Figma", logo: "/logos/figma.svg" },
-    { name: "VS Code", logo: "/logos/vscode.svg" },
-    { name: "Git", logo: "/logos/git.svg" },
-    { name: "GitHub", logo: "/logos/github.svg" },
-    { name: "MySQL", logo: "/logos/mysql.svg" },
+    { name: "Figma", icon: "logos:figma" },
+    { name: "VS Code", icon: "logos:visual-studio-code" },
+    { name: "Git", icon: "logos:git-icon" },
+    { name: "GitHub", icon: "mdi:github" }, 
+    { name: "MySQL", icon: "logos:mysql" },
   ],
 };
 
@@ -63,10 +66,11 @@ export default function About() {
 
           <div className="space-y-4">
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold text-white tracking-tight leading-tight">
-              Final‑year CS student crafting <span className="text-neutral-400">responsive</span>,
-              <br />
+              Final‑year CS student crafting{" "}
+              <span className="text-neutral-400">responsive</span>,<br />
               <span className="text-neutral-500">frontend architecture.</span>
             </h2>
+
             <p className="text-sm md:text-base text-neutral-400 leading-relaxed max-w-xl">
               Experienced in converting Figma designs into high‑performance frontend solutions using
               modern technologies. I focus on clean code, thoughtful motion, and{" "}
@@ -74,51 +78,40 @@ export default function About() {
               as good as they look.
             </p>
           </div>
+
           <div className="grid grid-cols-2 gap-4 pt-4 text-xs text-neutral-300">
             <div className="rounded-lg border border-neutral-800 bg-neutral-900/40 px-4 py-3">
-              <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-500">
-                Focus
-              </p>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-500">Focus</p>
               <p className="mt-1 font-medium text-neutral-100">
                 Frontend architecture & interaction design
               </p>
             </div>
             <div className="rounded-lg border border-neutral-800 bg-neutral-900/40 px-4 py-3">
-              <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-500">
-                Currently
-              </p>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-500">Currently</p>
               <p className="mt-1 font-medium text-neutral-100">
                 Final‑year CS · Building with Next.js & Tailwind
               </p>
             </div>
           </div>
+
           <div className="space-y-3 pt-4 text-sm text-neutral-300">
-            <div className="flex items-start gap-3">
-              <Icon
-                icon="solar:check-circle-linear"
-                className="mt-[2px] text-emerald-400"
-                width={18}
-              />
-              <p>Translate product ideas and Figma files into production‑ready UIs.</p>
-            </div>
-            <div className="flex items-start gap-3">
-              <Icon
-                icon="solar:check-circle-linear"
-                className="mt-[2px] text-emerald-400"
-                width={18}
-              />
-              <p>Design component systems that scale across pages and features.</p>
-            </div>
-            <div className="flex items-start gap-3">
-              <Icon
-                icon="solar:check-circle-linear"
-                className="mt-[2px] text-emerald-400"
-                width={18}
-              />
-              <p>Obsessed with micro‑interactions, performance, and accessibility.</p>
-            </div>
+            {[
+              "Translate product ideas and Figma files into production‑ready UIs.",
+              "Design component systems that scale across pages and features.",
+              "Obsessed with micro‑interactions, performance, and accessibility.",
+            ].map((t) => (
+              <div key={t} className="flex items-start gap-3">
+                <Icon
+                  icon="solar:check-circle-linear"
+                  className="mt-[2px] text-emerald-400"
+                  width={18}
+                />
+                <p>{t}</p>
+              </div>
+            ))}
           </div>
         </motion.div>
+
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -165,11 +158,7 @@ export default function About() {
                         className="inline-flex items-center gap-2 rounded-full border border-neutral-800 bg-neutral-950/60 px-3 py-1 text-[11px] font-medium text-neutral-200 shadow-sm transition-transform duration-200 group-hover:translate-y-[-1px]"
                       >
                         <span className="flex h-5 w-5 items-center justify-center rounded-full bg-neutral-900">
-                          <img
-                            src={tech.logo}
-                            alt={tech.name}
-                            className="h-3.5 w-3.5 object-contain"
-                          />
+                          <Icon icon={tech.icon} width={14} className="text-white" />
                         </span>
                         <span>{tech.name}</span>
                       </div>
